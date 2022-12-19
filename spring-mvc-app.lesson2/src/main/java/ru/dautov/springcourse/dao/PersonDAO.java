@@ -29,7 +29,7 @@ public class PersonDAO {
     }
 
     public Optional<Person> show(String email) {
-        return jdbcTemplate.query("SELECT * FROM Person WHERE email=?", new Object[] {email},
+        return jdbcTemplate.query("SELECT * FROM Person WHERE email=?", new Object[]{email},
                 new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
     }
 
@@ -40,12 +40,13 @@ public class PersonDAO {
     }
 
     public void save(Person person) {
-        jdbcTemplate.update("INSERT INTO Person(name, age, email) VALUES(?,?,?)", person.getName(), person.getAge(), person.getEmail());
+        jdbcTemplate.update("INSERT INTO Person(name, age, email, address) VALUES(?,?,?,?)",
+                person.getName(), person.getAge(), person.getEmail(), person.getAddress());
     }
 
     public void update(int id, Person updatedPerson) {
-        jdbcTemplate.update("UPDATE Person SET name=?, age=?, email=? WHERE id=?", updatedPerson.getName(),
-                updatedPerson.getAge(), updatedPerson.getEmail(), id);
+        jdbcTemplate.update("UPDATE Person SET name=?, age=?, email=?, address=? WHERE id=?", updatedPerson.getName(),
+                updatedPerson.getAge(), updatedPerson.getEmail(), updatedPerson.getAddress(), id);
     }
 
     public void delete(int id) {
@@ -56,6 +57,7 @@ public class PersonDAO {
     ////////////////////////////////////////////////////////////////////////////////////////////
     //////////// Тестируем производительность пакетной вставки /////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////
+
 
     public void testMultipleUpdate() {
         List<Person> people = create1000people();
@@ -97,10 +99,11 @@ public class PersonDAO {
     private List<Person> create1000people() {
         List<Person> people = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
-            people.add(new Person(i, "Name" + i, 30, "test" + i + "@mail.ru"));
+            people.add(new Person(i, "Name" + i, 30, "test" + i + "@mail.ru", "some address"));
         }
         return people;
     }
 
 
 }
+
